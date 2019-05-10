@@ -1,0 +1,122 @@
+---
+title: "Code Book for TidyData.txt"
+author: "Tim"
+date: "10 May 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+Observations  | Description
+------------- | -----------
+1. Subject       | Consists of 30 subjects numbered 1-30  
+2. Activity      | One of 6 activites subjects were recorded doing:  Walking, WalkingUpstairs, WalkingDownstais, Sitting, Standing, Laying
+
+
+# Measurements    
+
+3.  tBodyAccmeanX   
+4.  tBodyAccmeanY   
+5.  tBodyAccmeanZ   
+6.  tBodyAccstd
+7.  tBodyAccstdY
+8.  tBodyAccstdZ
+9.  tGravityAccmeanX
+10. tGravityAccmeanY
+11. tGravityAccmeanZ
+12. tGravityAccstdX
+13. tGravityAccstdY
+14. tGravityAccstdZ
+15. tBodyAccJerkmeanX
+16. tBodyAccJerkmeanY
+17. tBodyAccJerkmeanZ
+18. tBodyAccJerkstdX
+19. tBodyAccJerkstdY
+20. tBodyAccJerkstdZ
+21. tBodyGyromeanX
+22. tBodyGyromeanY
+23. tBodyGyromeanZ
+24. tBodyGyrostdX
+25. tBodyGyrostdY
+26. tBodyGyrostdZ
+27. tBodyGyroJerkmeanX
+28. tBodyGyroJerkmeanY
+29. tBodyGyroJerkmeanZ
+30. tBodyGyroJerkstdX
+31. tBodyGyroJerkstdY
+32. tBodyGyroJerkstdZ
+33. tBodyAccMagmean
+34. tBodyAccMagstd
+35. tGravityAccMagmean
+36. tGravityAccMagstd
+37. tBodyAccJerkMagmean
+38. tBodyAccJerkMagstd
+39. tBodyGyroMagmean
+40. tBodyGyroMagstd
+41. tBodyGyroJerkMagmean
+42. tBodyGyroJerkMagstd
+43. fBodyAccmeanX
+44. fBodyAccmeanY
+45. fBodyAccmeanZ
+46. fBodyAccstdX
+47. fBodyAccstdY
+48. fBodyAccstdZ
+49. fBodyAccmeanFreqX
+50. fBodyAccmeanFreqY
+51. fBodyAccmeanFreqZ
+52. fBodyAccJerkmeanX
+53. fBodyAccJerkmeanY
+54. fBodyAccJerkmeanZ
+55. fBodyAccJerkstdX
+56. fBodyAccJerkstdY
+57. fBodyAccJerkstdZ
+58. fBodyAccJerkmeanFreqX
+59. fBodyAccJerkmeanFreqY
+60. fBodyAccJerkmeanFreqZ
+61. fBodyGyromeanX
+62. fBodyGyromeanY
+63. fBodyGyromeanZ
+64. fBodyGyrostdX
+65. fBodyGyrostdY
+66. fBodyGyrostdZ
+67. fBodyGyromeanFreqX
+68. fBodyGyromeanFreqY
+69. fBodyGyromeanFreqZ
+70. fBodyAccMagmean
+71. fBodyAccMagstd
+72. fBodyAccMagmeanFreq
+73. fBodyBodyAccJerkMagmean
+74. fBodyBodyAccJerkMagstd
+75. fBodyBodyAccJerkMagmeanFreq
+76. fBodyBodyGyroMagmean
+77. fBodyBodyGyroMagstd
+78. fBodyBodyGyroMagmeanFreq
+79. fBodyBodyGyroJerkMagmean
+80. fBodyBodyGyroJerkMagstd
+81. fBodyBodyGyroJerkMagmeanFreq
+
+Note the index of all 81 variable match their index number in the tidy data file.
+Acceleration measurement "Acc" are in standard gravity units 'g'.
+Angular velocity measurements are in radian/second.
+
+
+# Summary
+
+The raw data from UCI dataset consisted of two main datasets: Test and Study. The test and study subjects had been randomly selected after the experiment was completed. Since the two datasets consisted of observations of the same variables, they were easily bound together by rows. 
+
+Column headers were contained in another file named (features.txt). We extracted these names and attached them to our main data frame. Furthermore our observational variables (subject and activity) were stored in separate files. These needed to bound to our main data frame as well. 
+
+Measurements were taken in 2.56second windows and the resulting data included 561 measurement variables. To simplify this data we extracted only the mean and standard deviation measurements resulting in 79 variables. 
+
+The activites column in the original data is a numbered factor which needs to be cross referenced with the activities file from the dataset. Therefore we gave all the levels of our activity factor column labels for easy reference.
+
+The aim of our analysis was to break the data down by subject and activity groups. This resulted in 180 groups(30 subjects and 6 activites). However multiple window samples were taken for each subject and activity. This resulted in duplication of our subject and activity observations. To deal with this we took the mean aggregate for each variable for our subject and activity groups. This collapsed our data from 10299 observations into our 180 observational groups. This was done using the reshape2 package in R - specifically the melt and dcast functions.
+
+
+
+
+

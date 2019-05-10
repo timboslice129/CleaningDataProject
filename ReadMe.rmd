@@ -1,0 +1,80 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Read Me
+
+**The run_analysis.R script takes the raw data from the UCI HAR Dataset and returns a tidy data frame that summarises the mean measurement of every variable for each subject and activity. There are 30 subjects and 6 activities so the data is summarised into 180 groups. Note that only the mean and standard deviation of each measurement was used in the analysis.**  
+
+
+
+Our first task was to read all the datafiles from the UCI HAR Dataset into R:
+```
+x_test <- read.table("UCI HAR Dataset/test/X_test.txt")
+y_test <- read.table("UCI HAR Dataset/test/y_test.txt")
+subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt")
+x_train <- read.table("UCI HAR Dataset/train/X_train.txt")
+y_train <- read.table("UCI HAR Dataset/train/y_train.txt")
+subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt")
+features <- read.table("UCI HAR Dataset/features.txt")
+```
+
+After careful examination of the datasets we merged the study and test matrices:
+```
+StudyandTest <- rbind(x_test, x_train)
+```
+
+We extract the features variable as a character vector and use it to name the variables of our dataframe:
+```
+features_vector <- as.character(features[,2])
+names(StudyandTest) <- features_vector
+```
+Subsetting dataframe to retain only the mean and standard deviation of each measurement as per project requirements:
+```
+StudyandTestMeansSTD <- StudyandTest[,grep("mean|std", features_vector)]
+```
+
+Merging subject and activity datasets to main dataframe:
+```
+subjects <- rbind(subject_test, subject_train)
+activity <- rbind(y_test, y_train)
+activitymeanstd <- cbind(activity, StudyandTestMeanSTD)
+complete_data <- cbind(subjects, activitymeanstd)
+```
+
+Naming subject and activity columns:
+```
+names(complete_data)[1] <- "subject"
+names(complete_data)[2] <- "activity"
+```
+
+Convert our activity and subject columns to  factors and assign levels based on the order of the activity.txt file:
+```
+complete_data$activity <- factor(complete_data$activity, labels = c("Walking", "WalkingUpstairs", "WalkingDownstairs", "Sitting", "Standing", "Laying"))
+complete_data$subject <- factor(complete_data$subject)
+```
+
+Removing unwanted characters in variable names to make our variables more descriptive and easier to read:
+```
+names1 <- names(complete_data)
+names1 <- gsub("\\(", "", names1)
+names1 <- gsub("\\)", "", names1)
+names1 <- gsub("-", "", names1)
+names(complete_data) <- names1
+```
+
+Using reshape2 package to melt our dataframe so all the measurement variables are in one column so we can summarise the data according to factors "subject" and "activity":
+```
+complete_data_melt <- melt(complete_data, id = c("subject", "activity"))
+tidy_data <- dcast(complete_data_melt, subject + activity ~ variable, mean)
+```
+
+Finally writing our tidy data to a text file:
+```
+write.table(tidy_data, file = "tidydata.txt")
+```
+
+
+
